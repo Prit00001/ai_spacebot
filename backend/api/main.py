@@ -92,15 +92,15 @@ def ask_question(query: Query):
             chosen_title = next((t for t in titles if user_question.lower() in t.lower()), titles[0] if titles else None)
 
             if chosen_title:
-                summary = wikipedia.summary(chosen_title, sentences=3)
+               summary = wikipedia.summary(chosen_title, sentences=2)
 
-                if question_type == "person":
-                    doc = nlp(summary)
-                    people = [ent.text for ent in doc.ents if ent.label_ == "PERSON"]
-                    if people:
-                        return {"answer": f"{people[0]} - {summary}"}
+if question_type == "person":
+    doc = nlp(summary)
+    entities = [ent.text for ent in doc.ents if ent.label_ in ["PERSON", "ORG"]]
+    if entities:
+        return {"answer": f"{entities[0]} conducted it. {summary}"}
 
-                return {"answer": f"(Wikipedia) {summary}"}
+return {"answer": summary}
 
             return {"answer": "Sorry, I couldn't find anything relevant on Wikipedia."}
 
